@@ -6,15 +6,23 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from scipy.spatial import distance
 
+import torch
 import spacy
 import nltk
 import benepar
 from benepar.spacy_plugin import BeneparComponent
 
+k = 25
 
 benepar.download('benepar_en')
 nlp = spacy.load('en')
 nlp.add_pipe(BeneparComponent('benepar_en'))
+
+nltk.download('punkt')
+
+roberta = torch.hub.load('pytorch/fairseq', 'roberta.base')
+roberta.eval()
+
 
 # doc = nlp("The time for action is now. It's never too late to do something.")
 # sent = list(doc.sents)[0]
@@ -53,7 +61,8 @@ with open('data/cub/all_sentences_keys.txt', 'wt') as output_file:
     for k in sentences_keys:
         output_file.write(str(k) + '\n')
 
-for sentence in sentences:
+phrases_list = []
+for sentence in tqdm(sentences):
     doc = nlp(sentence)
     sent = list(doc.sents)[0]
     queue = [sent]
@@ -63,5 +72,25 @@ for sentence in sentences:
         for c in segment._.children:
             phrases.append(str(c))
             queue.append(c)
-    print(phrases)
-    break
+    phrases_list.append(list(set(phrases)))
+
+with open('data/cub/kmeans.pkl', 'rb') as input_file:
+    kmeans = pickle.load(input_file)
+
+phrases_list_by_k = [[]] * k
+phrases_set_by_k = [[]] * k
+for i, l in enumerate(kmeans['labels'][k]):
+    phrases_list_by_k[l].extend(phrases_list[i])
+
+for k_ in range(k):
+    phrases_set_by_k[k_] = list(set(phrases_list_by_k[k_]))
+
+phrases_roberta_by_k = [[]] * k
+for k_ in range(k):
+    phrases_roberta_by_k[k] = [roberta.extract_features(p).detach().numpy() for p in phrases_set_by_k]
+
+data = {'phrases_set_by_k': phrases_set_by_k,
+        'phrases_roberta_by_k': phrases_roberta_by_k}
+
+with open('data/cub/phrases_roberta.base.pkl', 'wb') as output_file:
+    pickle.dump(data, output_file)
