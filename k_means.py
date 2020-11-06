@@ -32,7 +32,7 @@ n_iters_list = []
 
 scores = [0] * (max_k-1)
 for k in tqdm(range(2, max_k + 1)):
-    kmeans = KMeans(n_clusters=2, random_state=0).fit(X)
+    kmeans = KMeans(n_clusters=k, random_state=0).fit(X)
     kmeans_labels_list.append(kmeans.labels_)
     kmeans_cluster_centers_list.append(kmeans.cluster_centers_)
     n_iters_list.append(kmeans.n_iter_)
@@ -40,6 +40,7 @@ for k in tqdm(range(2, max_k + 1)):
     plt.scatter(v[0], v[1], c=kmeans.labels_, s=20)
     plt.title("CUB Descriptions Clusters (k = " + str(k) + ")")
     plt.savefig(f'figs/cub/k{k}.pdf')
+    plt.close()
 
     distortion = 0
     for i, x in enumerate(X):
@@ -54,7 +55,7 @@ plt.ylabel('Distortion')
 plt.xlabel('K Value')
 plt.xticks(range(max_k-1), range(2,max_k+1))
 plt.savefig('figs/cub/distortion.png')
-
+plt.close()
 
 kmeans_result = {'labels': kmeans_labels_list,
                  'centroids': kmeans_cluster_centers_list,
