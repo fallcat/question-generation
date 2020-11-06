@@ -74,12 +74,18 @@ for sentence in tqdm(sentences):
             queue.append(c)
     phrases_list.append(list(set(phrases)))
 
+with open('data/cub/phrases.pkl', 'wb') as output_file:
+    pickle.dump(phrases_list, output_file)
+
+with open('data/cub/phrases.pkl', 'rb') as output_file:
+    phrases_list = pickle.load(output_file)
+
 with open('data/cub/kmeans.pkl', 'rb') as input_file:
     kmeans = pickle.load(input_file)
 
 phrases_list_by_k = [[]] * k
 phrases_set_by_k = [[]] * k
-for i, l in enumerate(kmeans['labels'][k]):
+for i, l in enumerate(kmeans['labels'][k - 2]):
     phrases_list_by_k[l].extend(phrases_list[i])
 
 for k_ in range(k):
