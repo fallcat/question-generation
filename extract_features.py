@@ -1,6 +1,7 @@
 import torch
 import nltk
 import pickle
+from tqdm import tqdm
 
 nltk.download('punkt')
 
@@ -19,7 +20,11 @@ with open('data/cub/classes_w_descriptions_wiki.tsv', 'rt') as input_file:
 
 data_sents = {k: nltk.tokenize.sent_tokenize(v) for k, v in data.items()}
 data_encoded = {k: [roberta.encode(s) for s in v] for k, v in data_sents.items()}
-data_features = {k: [roberta.extract_features(s) for s in v] for k, v in data_encoded.items()}
+data_features = {}
+for k, v in tqdm(data_encoded.items()):
+    data_features[k] = []
+    for s in tqdm(v):
+        data_features[k].append(roberta.extract_features(s))
 
 with open('data/cub/descriptions_roberta.base.pkl', 'wb') as output_file:
     pickle.dump(data_features, output_file)
