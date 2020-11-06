@@ -18,7 +18,7 @@ with open('data/cub/classes_w_descriptions_aab_ebird.tsv', 'rt') as input_file:
 flattened_features = []
 flattened_features_keys = []
 for i, key in enumerate(keys):
-    flattened_features.extend([d.numpy() for d in data_features[key]])
+    flattened_features.extend([d.detach().numpy() for d in data_features[key]])
     flattened_features_keys.extend([i] * len(data_features[key]))
 
 X = np.array(flattened_features)
