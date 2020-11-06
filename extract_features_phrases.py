@@ -60,7 +60,7 @@ for sentence in sentences:
     phrases = []
     while len(queue) > 0:
         segment = queue.pop(0)
-        for c in sent._.children:
+        for c in segment._.children:
             phrases.append(str(c))
             queue.append(c)
     print(phrases)
