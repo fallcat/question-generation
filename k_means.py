@@ -7,8 +7,11 @@ from sklearn.decomposition import PCA
 from scipy.spatial import distance
 
 
-max_k = 25
 
+max_k = 25
+# {'data_features': data_features,
+#                  'flattened_features': flattened_features,
+#                  'flattened_features_keys': flattened_features_keys}
 data_features_file = pickle.load(open('data/cub/descriptions_roberta.base.pkl', 'rb'))
 data_features = data_features_file['data_features']
 flattened_features = data_features_file['flattened_features']
@@ -17,7 +20,16 @@ flattened_features_keys = data_features_file['flattened_features_keys']
 with open('data/cub/classes_w_descriptions_aab_ebird.tsv', 'rt') as input_file:
     keys = [line.strip().split('\t')[0] for line in input_file.readlines()]
 
-X = np.array(flattened_features)
+flattened_features = []
+flattened_features_keys = []
+for i, key in enumerate(keys):
+    flattened_features.extend([np.mean(d.detach().numpy(), axis=-2).reshape((-1)) for d in data_features[key]])
+    flattened_features_keys.extend([i] * len(data_features[key]))
+
+X = []
+for feat in flattened_features:
+    X.append(np.mean(feat, axis=-2).reshape(-1))
+X = np.array(X)
 
 pca = PCA(n_components=2)
 v = pca.fit(np.transpose(X)).components_
