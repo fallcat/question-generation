@@ -13,7 +13,7 @@ max_k = 25
 data_features = pickle.load(open('data/cub/descriptions_roberta.base.pkl', 'rb'))
 
 with open('data/cub/classes_w_descriptions_aab_ebird.tsv', 'rt') as input_file:
-    keys = [line.strip().split()[0] for line in input_file.readlines()]
+    keys = [line.strip().split('\t')[0] for line in input_file.readlines()]
 
 flattened_features = []
 flattened_features_keys = []
