@@ -93,7 +93,6 @@ for k_ in range(max_k):
 
 phrases_roberta_by_k = [[]] * max_k
 for k_ in tqdm(range(max_k)):
-    print(phrases_set_by_k[k_])
     phrases_roberta_by_k[k_] = [roberta.extract_features(roberta.encode(p)).detach().numpy() for p in phrases_set_by_k[k_]]
 
 data = {'phrases_set_by_k': phrases_set_by_k,
