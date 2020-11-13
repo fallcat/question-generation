@@ -12,7 +12,7 @@ import nltk
 import benepar
 from benepar.spacy_plugin import BeneparComponent
 
-k = 25
+max_k = 25
 
 benepar.download('benepar_en')
 nlp = spacy.load('en')
@@ -83,17 +83,17 @@ with open('data/cub/phrases.pkl', 'rb') as output_file:
 with open('data/cub/kmeans.pkl', 'rb') as input_file:
     kmeans = pickle.load(input_file)
 
-phrases_list_by_k = [[]] * k
-phrases_set_by_k = [[]] * k
-for i, l in enumerate(kmeans['labels'][k - 2]):
+phrases_list_by_k = [[]] * max_k
+phrases_set_by_k = [[]] * max_k
+for i, l in enumerate(kmeans['labels'][max_k - 2]):
     phrases_list_by_k[l].extend(phrases_list[i])
 
-for k_ in range(k):
+for k_ in range(max_k):
     phrases_set_by_k[k_] = list(set(phrases_list_by_k[k_]))
 
-phrases_roberta_by_k = [[]] * k
-for k_ in range(k):
-    phrases_roberta_by_k[k] = [roberta.extract_features(p).detach().numpy() for p in phrases_set_by_k]
+phrases_roberta_by_k = [[]] * max_k
+for k_ in range(max_k):
+    phrases_roberta_by_k[k_] = [roberta.extract_features(p).detach().numpy() for p in phrases_set_by_k]
 
 data = {'phrases_set_by_k': phrases_set_by_k,
         'phrases_roberta_by_k': phrases_roberta_by_k}
