@@ -60,22 +60,22 @@ with open('data/cub/all_sentences.txt', 'wt') as output_file:
 with open('data/cub/all_sentences_keys.txt', 'wt') as output_file:
     for k in sentences_keys:
         output_file.write(str(k) + '\n')
-
-phrases_list = []
-for sentence in tqdm(sentences):
-    doc = nlp(sentence)
-    sent = list(doc.sents)[0]
-    queue = [sent]
-    phrases = []
-    while len(queue) > 0:
-        segment = queue.pop(0)
-        for c in segment._.children:
-            phrases.append(str(c))
-            queue.append(c)
-    phrases_list.append(list(set(phrases)))
-
-with open('data/cub/phrases.pkl', 'wb') as output_file:
-    pickle.dump(phrases_list, output_file)
+#
+# phrases_list = []
+# for sentence in tqdm(sentences):
+#     doc = nlp(sentence)
+#     sent = list(doc.sents)[0]
+#     queue = [sent]
+#     phrases = []
+#     while len(queue) > 0:
+#         segment = queue.pop(0)
+#         for c in segment._.children:
+#             phrases.append(str(c))
+#             queue.append(c)
+#     phrases_list.append(list(set(phrases)))
+#
+# with open('data/cub/phrases.pkl', 'wb') as output_file:
+#     pickle.dump(phrases_list, output_file)
 
 with open('data/cub/phrases.pkl', 'rb') as output_file:
     phrases_list = pickle.load(output_file)
